@@ -1,5 +1,5 @@
 import React, { Component, Fragment, unstable_Profiler } from "react";
-import { Grid } from "@material-ui/core";
+import { Grid, Button } from "@material-ui/core";
 import SelectSearch from "react-select-search";
 import ReactMultiSelectCheckboxes from "react-multiselect-checkboxes";
 import { find } from "lodash";
@@ -12,6 +12,9 @@ export default class Continent extends Component {
     this.state = {
       continents: undefined,
       selectedContinent: undefined,
+      selectedCountries: undefined
+    };
+    this.baseState = {
       selectedCountries: undefined
     };
   }
@@ -53,6 +56,12 @@ export default class Continent extends Component {
   selectContinent = ({ value }) => {
     this.setState({
       selectedContinent: value
+    });
+  };
+
+  clearFlags = () => {
+    this.setState({
+      selectedCountries: this.baseState.selectedCountries
     });
   };
 
@@ -98,35 +107,57 @@ export default class Continent extends Component {
           </span>
         </Grid>
 
-        <Grid container>
-          <Grid xs={4}>
+        <Grid container style={{ marginTop: "3%", padding: "100px" }}>
+          <Grid xs={4} md={4} style={{ textAlign: "center" }}>
+            <h2>Step 1</h2>
+            <h5>Select Continent</h5>
             {this.state.continents && (
-              <SelectSearch
-                options={this.getContinets(this.state.continents)}
-                value="sv"
-                name="language"
-                placeholder="Choose your language"
-                value={this.state.selectedContinent}
-                onChange={value => this.selectContinent(value)}
-              />
+              <div className="transformClass">
+                <SelectSearch
+                  options={this.getContinets(this.state.continents)}
+                  value="sv"
+                  name="language"
+                  placeholder="Choose your language"
+                  value={this.state.selectedContinent}
+                  onChange={value => this.selectContinent(value)}
+                />
+              </div>
+            )}
+            {this.state.selectedContinent && <h5>Selected Continent</h5>}
+            {this.state.selectedContinent && (
+              <h2>{this.state.selectedContinent}</h2>
             )}
           </Grid>
-          <Grid xs={4}>
-            {this.state.selectedContinent && (
+          {this.state.selectedContinent && (
+            <Grid xs={4} md={4}>
+              <h2>Step 2</h2>
+              <h5>Now, Select a country</h5>
               <ReactMultiSelectCheckboxes
                 placeholder="Choose your language"
                 options={this.getCountries()}
                 onChange={value => this.selectCountries(value)}
               />
-            )}
-          </Grid>
-          <Grid xs={4}>
-            {this.state.selectedCountries &&
-              this.state.selectedCountries.map((country, index) => {
-                console.log("ABCD".toLowerCase());
-                return <Twemoji text={country.flag} />;
-              })}
-          </Grid>
+            </Grid>
+          )}
+          {this.state.selectedCountries && (
+            <Grid xs={4} md={4}>
+              <h2>Selected flags</h2>
+              <Grid>
+                {this.state.selectedCountries.map((country, index) => {
+                  console.log("ABCD".toLowerCase());
+                  return <Twemoji text={country.flag} />;
+                })}
+              </Grid>
+
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => this.clearFlags()}
+              >
+                Clear flags
+              </Button>
+            </Grid>
+          )}
         </Grid>
       </Fragment>
     );
